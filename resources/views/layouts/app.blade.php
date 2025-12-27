@@ -9,42 +9,68 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-    <style>
-        body {
-            background: #f1f5f9;
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
+   <style>
+    body {
+        background: #f1f5f9;
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+    }
+
+    .navbar {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.6rem;
+    }
+
+    /* ===== DASHBOARD ===== */
+    .dashboard-title {
+        font-weight: 700;
+        margin-bottom: 30px;
+    }
+
+    .dashboard-card {
+        border: none;
+        border-radius: 18px;
+        padding: 30px;
+        background: white;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #6366f1;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-success {
+        background: #10b981;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 10px;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .dashboard-title {
+            text-align: center;
         }
-        .navbar {
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.6rem;
-        }
-        .card {
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        }
-        .btn-primary {
-            background: #6366f1;
-            border: none;
-        }
-        .btn-primary:hover {
-            background: #4f46e5;
-        }
-        .btn-success {
-            background: #10b981;
-            border: none;
-        }
-        .btn-success:hover {
-            background: #059669;
-        }
-    </style>
+    }
+</style>
+
 </head>
 <body>
 

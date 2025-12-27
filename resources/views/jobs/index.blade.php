@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <!-- Hero Section -->
 <div class="bg-light py-5" style="background: #f1f5f9;">
     <div class="container">
@@ -11,8 +12,8 @@
             <!-- Search Bar -->
             <form action="{{ route('jobs.index') }}" method="GET" class="col-lg-8 mx-auto">
                 <div class="input-group input-group-lg shadow-sm rounded-pill overflow-hidden">
-                    <input type="text" name="search" class="form-control border-0 ps-4" 
-                           placeholder="Lavozim yoki kalit so'z kiriting..." 
+                    <input type="text" name="search" class="form-control border-0 ps-4"
+                           placeholder="Lavozim yoki kalit so'z kiriting..."
                            value="{{ request('search') }}">
                     <button class="btn btn-primary px-5 rounded-pill">
                         🔍 Qidirish
@@ -20,7 +21,7 @@
                 </div>
             </form>
 
-            <!-- Mashhur kategoriyalar (loyhada eng ko'p create qilingan lavozimlar bo'yicha) -->
+            <!-- Mashhur kategoriyalar -->
             <div class="mt-5">
                 <p class="text-muted mb-3 fw-semibold">Eng ko'p joylangan lavozimlar:</p>
                 <div class="d-flex flex-wrap justify-content-center gap-3">
@@ -40,10 +41,10 @@
     </div>
 </div>
 
-<!-- Mavjud ish o'rinlari (eng ko'p joylangan yuqorida) -->
+<!-- Ish o‘rinlari -->
 <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold">💼 Mavjud ish o‘rinlari (eng ko'p joylangan yuqorida)</h3>
+        <h3 class="fw-bold">💼 Mavjud ish o‘rinlari</h3>
         @auth
             <a href="{{ route('jobs.create') }}" class="btn btn-primary btn-lg shadow">
                 ➕ Yangi ish joylash
@@ -55,28 +56,20 @@
         <div class="row g-4">
             @foreach($jobs as $job)
                 <div class="col-md-6 col-lg-4">
-                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100" style="background: #f8f9fa;">
-                        <div class="card-body p-4 d-flex flex-column justify-content-between">
-                            <h5 class="card-title fw-bold text-dark mb-4">{{ $job->title }}</h5>
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="fw-bold mb-3">{{ $job->title }}</h5>
 
-                            <div class="mb-4">
-                                <p class="text-muted mb-2">
-                                    📍 {{ $job->location }}
-                                </p>
-                                <p class="text-success fw-bold fs-4 mb-3">
-                                    💰 {{ $job->salary }}
-                                </p>
-                                <p class="text-muted mb-2">
-                                    ⏰ {{ $job->work_time }}
-                                </p>
-                                <p class="text-muted small">
-                                    Egasi: {{ $job->employer->name ?? 'Noma\'lum' }}
-                                </p>
-                            </div>
+                            <p class="text-muted mb-1">📍 {{ $job->location }}</p>
+                            <p class="text-success fw-bold fs-4">💰 {{ $job->salary }}</p>
+                            <p class="text-muted">⏰ {{ $job->work_time }}</p>
+                            <p class="text-muted small">
+                                Egasi: {{ $job->employer->name ?? 'Nomaʼlum' }}
+                            </p>
 
-                            <a href="{{ route('jobs.show', $job) }}" 
-                               class="btn btn-outline-primary rounded-pill py-3 mt-auto shadow-sm">
-                                Batafsil ko'rish
+                            <a href="{{ route('jobs.show', $job) }}"
+                               class="btn btn-outline-primary rounded-pill mt-auto">
+                                Batafsil ko‘rish
                             </a>
                         </div>
                     </div>
@@ -84,22 +77,58 @@
             @endforeach
         </div>
     @else
-        <div class="text-center py-5">
-            <p class="fs-4 text-muted">Hozircha ishlar mavjud emas 😔</p>
-        </div>
+        <p class="text-center fs-4 text-muted">Hozircha ishlar mavjud emas 😔</p>
     @endif
 </div>
 
+<!-- Footer -->
+<footer class="pt-5 pb-4" style="background:#0f172a;">
+    <div class="container">
+        <div class="row gy-4">
+            <div class="col-md-4">
+                <h4 class="text-white fw-bold">💼 IshTop</h4>
+                <p class="text-light opacity-75">
+                    Eng qulay va ishonchli ish topish platformasi.
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <h5 class="text-white">Havolalar</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{{ route('jobs.index') }}" class="text-light text-decoration-none opacity-75">🔍 Ishlar</a></li>
+                    @auth
+                    <li><a href="{{ route('jobs.create') }}" class="text-light text-decoration-none opacity-75">➕ Ish joylash</a></li>
+                    @endauth
+                </ul>
+            </div>
+
+            <div class="col-md-4">
+                <h5 class="text-white">Aloqa</h5>
+                <p class="text-light opacity-75">📍 Toshkent</p>
+                <p class="text-light opacity-75">📞 +998 90 123 45 67</p>
+                <p class="text-light opacity-75">✉️ info@ishtop.uz</p>
+            </div>
+        </div>
+
+        <hr class="border-secondary mt-4">
+
+        <p class="text-center text-light opacity-75 mb-0">
+            © {{ date('Y') }} IshTop. Barcha huquqlar himoyalangan.
+        </p>
+    </div>
+</footer>
+
+<!-- Styles -->
 <style>
     .card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
-        transition: all 0.3s ease;
+        transform: translateY(-8px);
+        transition: 0.3s;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     }
     .badge:hover {
         background: #6366f1 !important;
-        color: white !important;
-        transition: 0.3s;
+        color: #fff !important;
     }
 </style>
+
 @endsection
