@@ -7,7 +7,7 @@
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
                 <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 fw-bold">{{ $receiver->name }} bilan suhbat</h5>
+                        <h5 class="mb-0 fw-bold">{{ $receiver->name }} </h5>
                         <a href="{{ route('messages.index') }}" class="text-white">← Orqaga</a>
                     </div>
                 </div>

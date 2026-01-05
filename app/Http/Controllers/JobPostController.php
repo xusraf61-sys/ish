@@ -2,34 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\job_post;  // <-- job_post (snake_case bilan)
+use App\Models\job_post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class JobPostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jobs = job_post::latest()->get();  // <-- job_post (kichik harflar bilan)
+        // Qidiruv parametrlari
+        $search = $request->query('search');
+        $title = $request->query('title'); // mashhur kategoriyalar uchun
+
+        $query = job_post::query();
+
+        // Umumiy qidiruv: lavozim nomi yoki tavsif bo‘yicha
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%")
+                  ->orWhere('location', 'LIKE', "%{$search}%");
+            });
+        }
+
+        // Mashhur kategoriyalar (masalan: ?title=sotuv-menejeri)
+        if ($title) {
+            $query->where('title', 'LIKE', "%{$title}%");
+        }
+
+        // Yangi e'lonlar yuqorida chiqishi uchun
+        $jobs = $query->latest()->get();
+
         return view('jobs.index', compact('jobs'));
     }
 
     public function create()
     {
-return view('jobs.create'); 
+        return view('jobs.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'required',
-            'salary' => 'required',
-            'work_time' => 'required',
-            'location' => 'required'
+            'salary' => 'required|string',
+            'work_time' => 'required|string',
+            'location' => 'required|string'
         ]);
 
-        job_post::create([  // <-- job_post
+        job_post::create([
             'user_id' => Auth::id(),
             'title' => $request->title,
             'description' => $request->description,
@@ -38,10 +60,10 @@ return view('jobs.create');
             'location' => $request->location
         ]);
 
-        return redirect()->route('jobs.index')->with('success', 'Ish qo‘shildi!');
+        return redirect()->route('jobs.index')->with('success', 'Ish eʼloni muvaffaqiyatli qoʻshildi!');
     }
 
-    public function show(job_post $job)  // <-- job_post
+    public function show(job_post $job)
     {
         return view('jobs.show', compact('job'));
     }

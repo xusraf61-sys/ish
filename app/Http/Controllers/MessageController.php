@@ -6,19 +6,54 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MessageController extends Controller
 {
     /**
-     * Suhbatlar ro'yxati — barcha foydalanuvchilar (o'zidan tashqari)
+     * Suhbatlar ro'yxati — faqat suhbat bo'lgan userlar + oxirgi xabar bilan
      */
     public function index()
     {
-        $users = User::where('id', '!=', Auth::id())
-                     ->select('id', 'name')  // faqat kerakli maydonlar
-                     ->orderBy('name')
-                     ->get();
+        $currentUserId = Auth::id();
+
+        $users = User::query()
+            ->select('users.id', 'users.name')
+            ->addSelect([
+                'last_message' => Message::select('message')
+                    ->whereColumn('sender_id', 'users.id')
+                    ->where('receiver_id', $currentUserId)
+                    ->orWhereColumn('receiver_id', 'users.id')
+                    ->where('sender_id', $currentUserId)
+                    ->orderByDesc('created_at')
+                    ->limit(1),
+
+                'last_message_time' => Message::select('created_at')
+                    ->whereColumn('sender_id', 'users.id')
+                    ->where('receiver_id', $currentUserId)
+                    ->orWhereColumn('receiver_id', 'users.id')
+                    ->where('sender_id', $currentUserId)
+                    ->orderByDesc('created_at')
+                    ->limit(1)
+            ])
+            ->where(function ($query) use ($currentUserId) {
+                $query->whereExists(function ($sub) use ($currentUserId) {
+                    $sub->select(DB::raw(1))
+                        ->from('messages')
+                        ->whereColumn('sender_id', 'users.id')
+                        ->where('receiver_id', $currentUserId);
+                })
+                ->orWhereExists(function ($sub) use ($currentUserId) {
+                    $sub->select(DB::raw(1))
+                        ->from('messages')
+                        ->whereColumn('receiver_id', 'users.id')
+                        ->where('sender_id', $currentUserId);
+                });
+            })
+            ->where('users.id', '!=', $currentUserId)
+            ->orderByDesc('last_message_time')
+            ->get();
 
         return view('messages.index', compact('users'));
     }
@@ -47,7 +82,7 @@ class MessageController extends Controller
             $q->where('sender_id', $userId)
               ->where('receiver_id', Auth::id());
         })
-        ->with(['sender', 'receiver'])  // Eager loading — tezroq ishlaydi
+        ->with(['sender', 'receiver'])
         ->orderBy('created_at', 'asc')
         ->get();
 
@@ -57,21 +92,20 @@ class MessageController extends Controller
     /**
      * Yangi xabar yuborish
      */
-public function store(Request $request)
-{
-    $request->validate([
-        'receiver_id' => 'required|exists:users,id|different:' . Auth::id(),
-        'message'     => 'required|string|min:1|max:2000',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'receiver_id' => 'required|exists:users,id|different:' . Auth::id(),
+            'message'     => 'required|string|min:1|max:2000',
+        ]);
 
-    Message::create([
-        'sender_id'   => Auth::id(),
-        'receiver_id' => $request->receiver_id,
-        'message'     => trim($request->message),
-        'job_id'      => null, // agar kerak bo‘lsa yoki nullable ustun
-    ]);
+        Message::create([
+            'sender_id'   => Auth::id(),
+            'receiver_id' => $request->receiver_id,
+            'message'     => trim($request->message),
+            'job_id'      => null,
+        ]);
 
-    return back()->with('success', 'Xabar muvaffaqiyatli yuborildi!');
-}
-
+        return back()->with('success', 'Xabar muvaffaqiyatli yuborildi!');
+    }
 }
