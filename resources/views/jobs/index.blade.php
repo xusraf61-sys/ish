@@ -10,16 +10,17 @@
             <p class="lead text-muted mb-5">Loyhada eng ko'p joylangan ish o'rinlari</p>
 
             <!-- Search Bar -->
-            <form action="{{ route('jobs.index') }}" method="GET" class="col-lg-8 mx-auto">
-                <div class="input-group input-group-lg shadow-sm rounded-pill overflow-hidden">
-                    <input type="text" name="search" class="form-control border-0 ps-4"
-                           placeholder="Lavozim yoki kalit so'z kiriting..."
-                           value="{{ request('search') }}">
-                    <button class="btn btn-primary px-5 rounded-pill">
-                        🔍 Qidirish
-                    </button>
-                </div>
-            </form>
+            <!-- Search Bar (yangilangan: search qiymati saqlanib qoladi va title parametrlari to'g'ri ishlaydi) -->
+<form action="{{ route('jobs.index') }}" method="GET" class="col-lg-8 mx-auto">
+    <div class="input-group input-group-lg shadow-sm rounded-pill overflow-hidden">
+        <input type="text" name="search" class="form-control border-0 ps-4"
+               placeholder="Lavozim yoki kalit so'z kiriting..."
+               value="{{ request('search') }}">
+        <button class="btn btn-primary px-5 rounded-pill">
+            🔍 Qidirish
+        </button>
+    </div>
+</form>
 
             <!-- Mashhur kategoriyalar -->
             <div class="mt-5">
